@@ -1,0 +1,191 @@
+{
+  "name": "Beyond LO - Karate AI Test Orchestrator & Triage",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "run-karate-tests",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [180, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5050/api/tests/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"feature\": \"{{ $json.body.feature || '04' }}\",\n  \"env\": \"{{ $json.body.env || 'test' }}\",\n  \"tags\": \"{{ $json.body.tags || '' }}\",\n  \"triggeredBy\": \"{{ $json.body.triggeredBy || 'n8n-webhook' }}\",\n  \"aiTriage\": true,\n  \"autoLogMantis\": true\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "2",
+      "name": "Execute Karate Test Runner",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [420, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.success }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "All Tests Passed?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [680, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\n\nconst cbsList = (data.cbsAccountsCreated && data.cbsAccountsCreated.length > 0)\n  ? data.cbsAccountsCreated.join(', ')\n  : 'N/A';\n\nconst message = `\n✅ *BEYOND LO AUTOMATION - EXECUTION SUCCESS*\n--------------------------------------------------\n• *Feature*: ${data.feature}\n• *Environment*: ${data.environment.toUpperCase()}\n• *Scenarios Passed*: ${data.metrics.passed} / ${data.metrics.totalScenarios} (100%)\n• *Duration*: ${data.durationSeconds}s\n• *CBS Accounts Generated*: ${cbsList}\n• *Triggered By*: ${data.triggeredBy}\n\n📊 *Full Excel Report*: http://localhost:5050${data.reports.excelDownloadUrl}\n`;\n\nreturn { json: { success: true, message, raw: data } };"
+      },
+      "id": "4",
+      "name": "Format Success Report",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 180]
+    },
+    {
+      "parameters": {
+        "jsCode": "const data = $input.first().json;\nconst triage = data.aiTriage || {};\n\nconst message = `\n🚨 *BEYOND LO AUTOMATION - TEST FAILURE ALERT*\n--------------------------------------------------\n• *Feature*: ${data.feature}\n• *Environment*: ${data.environment.toUpperCase()}\n• *Failed Scenarios*: ${data.metrics.failed} / ${data.metrics.totalScenarios}\n• *Pass Rate*: ${data.metrics.passRate}\n• *Duration*: ${data.durationSeconds}s\n\n🤖 *AI ROOT-CAUSE TRIAGE*:\n• *Category*: ${triage.failureCategory || 'UNKNOWN'}\n• *Severity*: ${triage.severity || 'HIGH'}\n• *Summary*: ${triage.rootCauseSummary || 'Assertion failed.'}\n• *Failing Service*: ${triage.failingEndpoint || 'Check logs'}\n• *Recommended Action*: ${triage.recommendedAction || 'Inspect stack trace'}\n\n📊 *Full Excel Report*: http://localhost:5050${data.reports.excelDownloadUrl}\n`;\n\nreturn {\n  json: {\n    success: false,\n    message,\n    isRealBug: triage.failureCategory === 'CODE_REGRESSION',\n    triage,\n    raw: data\n  }\n};"
+      },
+      "id": "5",
+      "name": "Format AI Failure Triage",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [940, 420]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.isRealBug }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "6",
+      "name": "Is Code Regression?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [1180, 420]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5050/api/defects/mantis",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"feature\": \"{{ $json.raw.feature }}\",\n  \"env\": \"{{ $json.raw.environment }}\",\n  \"triage\": {{ JSON.stringify($json.triage) }},\n  \"rawFailures\": {{ JSON.stringify($json.raw.failures) }},\n  \"durationSeconds\": {{ $json.raw.durationSeconds }},\n  \"cbsAccountsCreated\": {{ JSON.stringify($json.raw.cbsAccountsCreated || []) }}\n}",
+        "options": {}
+      },
+      "id": "7",
+      "name": "Auto Create MantisBT Ticket",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [1420, 400]
+    },
+    {
+      "parameters": {
+        "jsCode": "const mantis = $input.first().json;\nconst prev = $node['Format AI Failure Triage'].json;\n\nconst mantisMsg = `\n🐞 *MANTISBT DEFECT TICKET AUTOMATICALLY CREATED*\n--------------------------------------------------\n• *Ticket ID*: #${mantis.issue ? mantis.issue.formattedId : 'N/A'}\n• *Summary*: ${mantis.issue ? mantis.issue.summary : 'Defect logged'}\n• *Project*: ${mantis.issue ? mantis.issue.project : 'BeyondLO'}\n• *URL*: ${mantis.issue ? mantis.issue.url : 'http://localhost:5050'}\n• *Mode*: ${mantis.simulated ? 'SIMULATED (Pending Mantis URL/Token)' : 'LIVE'}\n\n${prev.message}\n`;\n\nreturn { json: { success: false, mantisAlert: mantisMsg, mantisResult: mantis } };"
+      },
+      "id": "8",
+      "name": "Format Mantis Notification",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1660, 400]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Execute Karate Test Runner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Karate Test Runner": {
+      "main": [
+        [
+          {
+            "node": "All Tests Passed?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "All Tests Passed?": {
+      "main": [
+        [
+          {
+            "node": "Format Success Report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Format AI Failure Triage",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format AI Failure Triage": {
+      "main": [
+        [
+          {
+            "node": "Is Code Regression?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Is Code Regression?": {
+      "main": [
+        [
+          {
+            "node": "Auto Create MantisBT Ticket",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Auto Create MantisBT Ticket": {
+      "main": [
+        [
+          {
+            "node": "Format Mantis Notification",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

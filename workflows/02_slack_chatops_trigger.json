@@ -1,0 +1,92 @@
+{
+  "name": "Beyond LO - Slack ChatOps Test Runner",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "slack-chatops",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Slack Slash Command Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [180, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const text = ($input.first().json.body.text || '04 test').trim();\nconst parts = text.split(/\\s+/);\n\nconst feature = parts[0] || '04';\nconst env = parts[1] || 'test';\nconst user = $input.first().json.body.user_name || 'slack-user';\n\nreturn {\n  json: {\n    feature,\n    env,\n    triggeredBy: `@${user}`\n  }\n};"
+      },
+      "id": "2",
+      "name": "Parse Command Arguments",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [400, 240]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://localhost:5050/api/tests/run",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"feature\": \"{{ $json.feature }}\",\n  \"env\": \"{{ $json.env }}\",\n  \"triggeredBy\": \"{{ $json.triggeredBy }}\",\n  \"aiTriage\": true\n}",
+        "options": {
+          "timeout": 300000
+        }
+      },
+      "id": "3",
+      "name": "Execute Test Runner",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [620, 240]
+    },
+    {
+      "parameters": {
+        "jsCode": "const res = $input.first().json;\nconst isPass = res.success;\n\nlet responseText = '';\nif (isPass) {\n  responseText = `✅ *Execution PASSED* for Feature *${res.feature}* (${res.environment.toUpperCase()})\\n• Passed: ${res.metrics.passed}/${res.metrics.totalScenarios} (100%)\\n• Duration: ${res.durationSeconds}s\\n• CBS Accounts: ${res.cbsAccountsCreated.join(', ') || 'None'}\\n• Excel: http://localhost:5050/api/reports/download/excel`;\n} else {\n  const triage = res.aiTriage || {};\n  responseText = `🚨 *Execution FAILED* for Feature *${res.feature}* (${res.environment.toUpperCase()})\\n• Failed: ${res.metrics.failed}/${res.metrics.totalScenarios}\\n• AI Root Cause: ${triage.rootCauseSummary || 'Assertion failed.'}\\n• Recommended Fix: ${triage.recommendedAction || 'Check logs'}\\n• Excel: http://localhost:5050/api/reports/download/excel`;\n}\n\nreturn {\n  json: {\n    response_type: \"in_channel\",\n    text: responseText\n  }\n};"
+      },
+      "id": "4",
+      "name": "Format Slack Reply",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [840, 240]
+    }
+  ],
+  "connections": {
+    "Slack Slash Command Trigger": {
+      "main": [
+        [
+          {
+            "node": "Parse Command Arguments",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse Command Arguments": {
+      "main": [
+        [
+          {
+            "node": "Execute Test Runner",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Test Runner": {
+      "main": [
+        [
+          {
+            "node": "Format Slack Reply",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

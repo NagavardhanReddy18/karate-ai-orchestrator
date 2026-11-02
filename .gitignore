@@ -1,0 +1,16 @@
+# Dependencies
+node_modules/
+
+# Environment secrets & credentials (Mantis token, passwords)
+.env
+*.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# OS and IDE temporary files
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/

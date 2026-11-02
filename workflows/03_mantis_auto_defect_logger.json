@@ -1,0 +1,82 @@
+{
+  "name": "Beyond LO - MantisBT Auto Defect Logger",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "log-mantis-bug",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook Trigger",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [200, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "const triage = $input.first().json.body.triage || {};\nconst testData = $input.first().json.body.raw || {};\n\nconst summary = `[Karate AI Auto-Bug] ${triage.failingEndpoint || 'Loan Origination API'} - ${triage.rootCauseSummary || 'API Regression'}`;\n\nconst description = `Automated Test Failure Detected by Karate AI Orchestrator\n\n=======================================================\n* Feature File: ${testData.feature}\n* Environment: ${testData.environment} (dev=9090, test=9190)\n* AI Severity: ${triage.severity || 'HIGH'}\n* Root Cause: ${triage.rootCauseSummary || 'N/A'}\n* HTTP Status: ${triage.httpStatus || 'N/A'}\n* Recommended Resolution: ${triage.recommendedAction || 'N/A'}\n=======================================================\n\nRaw Failure Stack Snippet:\n${JSON.stringify(testData.failures || [], null, 2)}\n\nFull Excel Report: http://localhost:5050/api/reports/download/excel\n`;\n\nlet mantisSeverity = 'major';\nif (triage.severity === 'CRITICAL') mantisSeverity = 'crash';\nelse if (triage.severity === 'MEDIUM') mantisSeverity = 'minor';\nelse if (triage.severity === 'LOW') mantisSeverity = 'trivial';\n\nreturn {\n  json: {\n    summary,\n    description,\n    category: { name: process.env.MANTIS_CATEGORY || \"General\" },\n    project: { name: process.env.MANTIS_PROJECT_NAME || \"BeyondLO\" },\n    severity: { name: mantisSeverity },\n    priority: { name: \"high\" },\n    reproducibility: { name: \"always\" }\n  }\n};"
+      },
+      "id": "2",
+      "name": "Format Mantis Issue Payload",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "={{ $env.MANTIS_BASE_URL }}/issues",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Authorization",
+              "value": "={{ $env.MANTIS_API_TOKEN }}"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"summary\": \"{{ $json.summary }}\",\n  \"description\": \"{{ $json.description }}\",\n  \"category\": {{ JSON.stringify($json.category) }},\n  \"project\": {{ JSON.stringify($json.project) }},\n  \"severity\": {{ JSON.stringify($json.severity) }},\n  \"priority\": {{ JSON.stringify($json.priority) }},\n  \"reproducibility\": {{ JSON.stringify($json.reproducibility) }}\n}",
+        "options": {}
+      },
+      "id": "3",
+      "name": "Create MantisBT Issue",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [680, 300]
+    }
+  ],
+  "connections": {
+    "Webhook Trigger": {
+      "main": [
+        [
+          {
+            "node": "Format Mantis Issue Payload",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Mantis Issue Payload": {
+      "main": [
+        [
+          {
+            "node": "Create MantisBT Issue",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

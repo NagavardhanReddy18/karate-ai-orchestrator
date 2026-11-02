@@ -1,0 +1,5 @@
+{
+  "feature": "07",
+  "env": "test",
+  "errorLog": "org.graalvm.polyglot.PolyglotException: [CBS OD ACCOUNT NOT CREATED] TestCase TC-CLEAN-EOD-AUTO_CO-05: POST /currentsavings HTTP 503 {\"error\":\"Matching sub-product not found. Account could not be opened\"}\nclasspath:features/loans/od-cs-account-create-helper.feature:10"
+}
