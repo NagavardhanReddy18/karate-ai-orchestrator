@@ -1,0 +1,2 @@
+Dummy document content for Karate E2E loan lifecycle document upload testing.
+Customer Identification & Verification Document.

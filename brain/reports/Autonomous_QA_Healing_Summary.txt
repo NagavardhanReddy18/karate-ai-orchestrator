@@ -1,0 +1,20 @@
+================================================================================
+AUTONOMOUS QA AGENT — SELF-HEALING ROOT CAUSE & RESOLUTION REPORT
+================================================================================
+Generated At  : 2026-11-13T09:53:01.949246700Z
+Environment   : 9190
+Excel Rewrite : true
+Brain Dir     : C:\Latest-BeyondLo-Sep23rd\karate-Autonomous-QA-Agent\brain
+Healed Fields : 2
+--------------------------------------------------------------------------------
+[1] Test Case : TC-RPO-06-MORATORIUM-INT | Sub-Product: PL002DEFAULTUSD
+    1) First-Time Failure Error : First-time schedule/origination step fails for CBS sub-product PL002DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.
+    2) Rewrite Applied          : Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL002DEFAULTUSD configuration.
+    3) Final Resolution         : RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040196)
+
+[2] Test Case : TC-CAR-MANUAL-01-PL001-NO-SCORECARD | Sub-Product: PL001DEFAULTUSD
+    1) First-Time Failure Error : First-time schedule/origination step fails for CBS sub-product PL001DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.
+    2) Rewrite Applied          : Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL001DEFAULTUSD configuration.
+    3) Final Resolution         : RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040197)
+
+================================================================================

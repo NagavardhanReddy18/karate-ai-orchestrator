@@ -1,0 +1,7 @@
+target/
+brain/logs/*.log
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

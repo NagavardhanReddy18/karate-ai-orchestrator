@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 20px; }
+.container { background: #fff; border-radius: 8px; padding: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+h2 { color: #1b365d; border-bottom: 2px solid #1b365d; padding-bottom: 8px; }
+.metric-box { display: inline-block; width: 22%; background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 6px; padding: 15px; margin-right: 2%; text-align: center; box-sizing: border-box; }
+.metric-val { font-size: 24px; font-weight: bold; margin-top: 5px; }
+.pass { color: #28a745; } .fail { color: #dc3545; }
+table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+th, td { border: 1px solid #dee2e6; padding: 10px 12px; text-align: left; }
+th { background-color: #1b365d; color: #fff; }
+tr:nth-child(even) { background-color: #f8f9fa; }
+.status-badge { padding: 4px 8px; border-radius: 4px; font-weight: bold; text-align: center; }
+.badge-pass { background-color: #d4edda; color: #155724; }
+.badge-fail { background-color: #f8d7da; color: #721c24; }
+</style>
+</head>
+<body>
+<div class="container">
+<h2>Beyond LO — Karate API Test Execution Summary</h2>
+<div style="margin-bottom: 20px;">
+<div class="metric-box"><div>Total Test Cases</div><div class="metric-val">3</div></div>
+<div class="metric-box"><div>Passed</div><div class="metric-val pass">3</div></div>
+<div class="metric-box"><div>Failed</div><div class="metric-val fail">0</div></div>
+<div class="metric-box"><div>Pass Rate</div><div class="metric-val">100.0%</div></div>
+</div>
+<h3>Feature Execution Breakdown (Features 04, 05, 06, 07)</h3>
+<table>
+<thead><tr><th>Feature ID</th><th>Feature File</th><th>Test Cases</th><th>Passed</th><th>Failed</th><th>Duration (s)</th><th>Status</th></tr></thead>
+<tbody>
+<tr><td>04</td><td>04-BLO-LifeCycle.feature</td><td>3</td><td>3</td><td>0</td><td>101.18</td><td><span class="status-badge badge-pass">PASSED</span></td></tr>
+</tbody>
+</table>
+<h3 style="color: #1b365d;">Autonomous Self-Healing RCA (First-Time Failure &rarr; Rewrite &rarr; Resolution)</h3>
+<table>
+<thead><tr><th>Test Case ID</th><th>Sub-Product</th><th>Field Change</th><th>First-Time Failure Reason</th><th>Rewrite Applied</th><th>Resolution</th></tr></thead>
+<tbody>
+<tr><td>TC-RPO-06-MORATORIUM-INT</td><td>PL002DEFAULTUSD</td><td>repaymentStartDate: 2026-11-01 &rarr; 2026-12-14</td><td>First-time schedule/origination step fails for CBS sub-product PL002DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.</td><td>Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL002DEFAULTUSD configuration.</td><td><span class="status-badge badge-pass">RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040196)</span></td></tr>
+<tr><td>TC-CAR-MANUAL-01-PL001-NO-SCORECARD</td><td>PL001DEFAULTUSD</td><td>repaymentStartDate: 2026-11-01 &rarr; 2026-12-14</td><td>First-time schedule/origination step fails for CBS sub-product PL001DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.</td><td>Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL001DEFAULTUSD configuration.</td><td><span class="status-badge badge-pass">RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040197)</span></td></tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

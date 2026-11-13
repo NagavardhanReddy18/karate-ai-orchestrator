@@ -1,0 +1,93 @@
+# ==============================================================================
+# Beyond LO - Automation Suite Feature Execution Configuration
+# ==============================================================================
+# All test and setup features are listed below in sequential execution order.
+# To run any feature, simply uncomment it (remove the '#' symbol).
+# To reorder execution, simply move lines up or down.
+# ==============================================================================
+
+karate:
+  # ----------------------------------------------------------------------------
+  # Active Features & Execution Order
+  # (Currently enabled: 04, 05, 06, 07 — all setup and exception features commented)
+  # ----------------------------------------------------------------------------
+  features:
+    # --- CBS Master Data & Synchronization ---
+    # - 00-Setup-Cbs-Sync.feature
+
+    # --- Core Configuration & Master Data Setup ---
+    # - 01-Setup-Configurations.feature
+    # - 02-Setup-Approval-Limits.feature
+    # - 03-Setup-Document-Checklists.feature
+    # - 03A-Setup-Incident-Charges.feature
+    # - 03B-Setup-Notifications.feature
+
+    # --- Core End-to-End Loan Lifecycles (ENABLED) ---
+    - 04-BLO-LifeCycle.feature
+    - 05-BLO-Enterprise-LifeCycle.feature
+    - 06-BLO-Overdraft-LifeCycle.feature
+    - 07-BLO-Enterprise-Overdraft-LifeCycle.feature
+
+    # --- Exceptions, Lookup & Additional Test Suites ---
+    # - 08-BLO-SendBack-and-Rejection.feature
+    # - 09-customer-lookup.feature
+    # - 10-list-and-search.feature
+    # - 15-application-lifecycle.feature
+    # - 16-CRUD-Configurations.feature
+    # - 17-Setup-All-Configurations.feature
+
+  # ----------------------------------------------------------------------------
+  # Environment-Specific Overrides (dev = 9090, test = 9190)
+  # ----------------------------------------------------------------------------
+  environments:
+    dev:
+      features:
+        # --- CBS Master Data & Synchronization ---
+        # - 00-Setup-Cbs-Sync.feature
+
+        # --- Core Configuration & Master Data Setup ---
+        # - 01-Setup-Configurations.feature
+        # - 02-Setup-Approval-Limits.feature
+        # - 03-Setup-Document-Checklists.feature
+        # - 03A-Setup-Incident-Charges.feature
+        # - 03B-Setup-Notifications.feature
+
+        # --- Core End-to-End Loan Lifecycles (ENABLED) ---
+        - 04-BLO-LifeCycle.feature
+        - 05-BLO-Enterprise-LifeCycle.feature
+        - 06-BLO-Overdraft-LifeCycle.feature
+        - 07-BLO-Enterprise-Overdraft-LifeCycle.feature
+
+        # --- Exceptions, Lookup & Additional Test Suites ---
+        # - 08-BLO-SendBack-and-Rejection.feature
+        # - 09-customer-lookup.feature
+        # - 10-list-and-search.feature
+        # - 15-application-lifecycle.feature
+        # - 16-CRUD-Configurations.feature
+        # - 17-Setup-All-Configurations.feature
+
+    test:
+      features:
+        # --- CBS Master Data & Synchronization ---
+        # - 00-Setup-Cbs-Sync.feature
+
+        # --- Core Configuration & Master Data Setup ---
+        # - 01-Setup-Configurations.feature
+        # - 02-Setup-Approval-Limits.feature
+        # - 03-Setup-Document-Checklists.feature
+        # - 03A-Setup-Incident-Charges.feature
+        # - 03B-Setup-Notifications.feature
+
+        # --- Core End-to-End Loan Lifecycles (ENABLED) ---
+        - 04-BLO-LifeCycle.feature
+        - 05-BLO-Enterprise-LifeCycle.feature
+        - 06-BLO-Overdraft-LifeCycle.feature
+        - 07-BLO-Enterprise-Overdraft-LifeCycle.feature
+
+        # --- Exceptions, Lookup & Additional Test Suites ---
+        # - 08-BLO-SendBack-and-Rejection.feature
+        # - 09-customer-lookup.feature
+        # - 10-list-and-search.feature
+        # - 15-application-lifecycle.feature
+        # - 16-CRUD-Configurations.feature
+        # - 17-Setup-All-Configurations.feature

@@ -1,0 +1,24 @@
+================================================================================
+BEYOND LO AUTOMATION — KARATE API TEST EXECUTION SUMMARY
+================================================================================
+Environment     : 9190
+Execution Date  : 2026-11-13 03:23:01 pm
+Total Features  : 1
+Total Test Cases: 3 (Passed: 3, Failed: 0, Pass Rate: 100.00%)
+Total Duration  : 101.18 seconds
+--------------------------------------------------------------------------------
+FEATURE BREAKDOWN (04, 05, 06, 07):
+  - [Feature 04] 04-BLO-LifeCycle.feature                         : PASSED (3/3 Passed, 101.18s)
+--------------------------------------------------------------------------------
+RESULT STATUS: SUCCESS - ALL TEST CASES PASSED SUCCESSFULLY!
+--------------------------------------------------------------------------------
+AUTONOMOUS SELF-HEALING RCA (FIRST-TIME FAILURE -> REWRITE -> RESOLVED):
+  * [TC-RPO-06-MORATORIUM-INT | PL002DEFAULTUSD] repaymentStartDate: 2026-11-01 -> 2026-12-14
+    Why It Would Fail : First-time schedule/origination step fails for CBS sub-product PL002DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.
+    Rewrite Applied   : Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL002DEFAULTUSD configuration.
+    Resolution Status : RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040196)
+  * [TC-CAR-MANUAL-01-PL001-NO-SCORECARD | PL001DEFAULTUSD] repaymentStartDate: 2026-11-01 -> 2026-12-14
+    Why It Would Fail : First-time schedule/origination step fails for CBS sub-product PL001DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.
+    Rewrite Applied   : Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL001DEFAULTUSD configuration.
+    Resolution Status : RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040197)
+================================================================================

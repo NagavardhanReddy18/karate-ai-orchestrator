@@ -1,0 +1,38 @@
+{
+  "generatedAt" : "2026-11-13T09:53:01.949246700Z",
+  "environment" : "9190",
+  "brainDir" : "C:\\Latest-BeyondLo-Sep23rd\\karate-Autonomous-QA-Agent\\brain",
+  "totalHealedFields" : 2,
+  "writeExcelEnabled" : true,
+  "healingDecisions" : [ {
+    "filePath" : "C:\\Latest-BeyondLo-Sep23rd\\karate-Autonomous-QA-Agent\\target\\test-classes\\features\\loans\\testdata\\Retail-Excel-Automation.xlsx",
+    "workbookName" : "Retail-Excel-Automation.xlsx",
+    "testCaseId" : "TC-RPO-06-MORATORIUM-INT",
+    "productCode" : "PL002DEFAULTUSD",
+    "field" : "repaymentStartDate",
+    "oldValue" : "2026-11-01",
+    "newValue" : "2026-12-14",
+    "firstTimeFailureReason" : "First-time schedule/origination step fails for CBS sub-product PL002DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.",
+    "thought" : "Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.",
+    "action" : "SHIFT_REPAYMENT_START_DATE",
+    "rewriteSummary" : "Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL002DEFAULTUSD configuration.",
+    "resolutionStatus" : "RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040196)",
+    "cbsAccountNumber" : "01PL0000000040196",
+    "timestamp" : "2026-11-13T09:51:20.146413600Z"
+  }, {
+    "filePath" : "C:\\Latest-BeyondLo-Sep23rd\\karate-Autonomous-QA-Agent\\target\\test-classes\\features\\loans\\testdata\\Retail-Excel-Automation.xlsx",
+    "workbookName" : "Retail-Excel-Automation.xlsx",
+    "testCaseId" : "TC-CAR-MANUAL-01-PL001-NO-SCORECARD",
+    "productCode" : "PL001DEFAULTUSD",
+    "field" : "repaymentStartDate",
+    "oldValue" : "2026-11-01",
+    "newValue" : "2026-12-14",
+    "firstTimeFailureReason" : "First-time schedule/origination step fails for CBS sub-product PL001DEFAULTUSD because Excel repaymentStartDate='2026-11-01' violates CBS business-date / working-day rules: Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.",
+    "thought" : "Excel repaymentStartDate preceded disbursement/businessDate or fell on a weekend.",
+    "action" : "SHIFT_REPAYMENT_START_DATE",
+    "rewriteSummary" : "Rewritten repaymentStartDate from '2026-11-01' to '2026-12-14' in Retail-Excel-Automation.xlsx per CBS sub-product PL001DEFAULTUSD configuration.",
+    "resolutionStatus" : "RESOLVED — Test PASSED after rewrite (CBS Account: 01PL0000000040197)",
+    "cbsAccountNumber" : "01PL0000000040197",
+    "timestamp" : "2026-11-13T09:51:20.146413600Z"
+  } ]
+}
